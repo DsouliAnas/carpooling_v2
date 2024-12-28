@@ -1,11 +1,18 @@
 {
   "dependencies": {
+    "@angular/cli": "^16.2.16",
+    "@angular/common": "^16.2.12",
+    "@angular/compiler": "^16.2.12",
+    "@angular/core": "^16.2.12",
+    "@angular/forms": "^16.2.12",
+    "@angular/router": "^16.2.12",
     "bcrypt": "^5.1.1",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.2",
-    "nodemailer": "^6.9.16"
+    "nodemailer": "^6.9.16",
+    "typescript": "4.9"
   }
 }

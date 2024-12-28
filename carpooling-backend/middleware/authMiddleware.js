@@ -9,11 +9,9 @@ const verifyToken = (req, res, next) => {
 
   try {
     const tokenWithoutBearer = token.startsWith("Bearer ") ? token.slice(7) : token;
-
-    // Use JWT_SECRET from environment variables
     const decoded = jwt.verify(tokenWithoutBearer, process.env.JWT_SECRET);
-
-    req.user = decoded;
+    req.user = decoded; // Attach decoded user info to request
+    console.log("Token decoded:", decoded); // Log decoded token to check its content
     next();
   } catch (error) {
     console.error("Error verifying token:", error); // Log the error

@@ -1,5 +1,5 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs"); // Correct bcrypt version to use
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { verifyToken } = require("../middleware/authMiddleware");
@@ -10,6 +10,10 @@ const router = express.Router();
 router.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -40,29 +44,35 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Compare provided password with stored hashed password
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Generate JWT token using the secret from .env
+    // Generate JWT token
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET,  // Ensure JWT_SECRET is loaded
       { expiresIn: "1h" }
     );
 
     res.status(200).json({ token });
   } catch (error) {
-    console.error("Error during login:", error); // Log the error
-    res.status(500).json({ message: "Something went wrong", error });
+    console.error("Error during login:", error);
+    res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 });
+
 
 // Profile Route (Protected)
 router.get("/profile", verifyToken, async (req, res) => {
